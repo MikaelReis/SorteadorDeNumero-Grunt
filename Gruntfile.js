@@ -19,8 +19,11 @@ module.exports = function(grunt) {
         watch: {
             less: {
                 files: ['src/styles/**/*.less'],
-                tasks: ['less:development']
-            }
+                tasks: ['less:development'],
+                options: {
+                    livereload: true
+                }
+            }   
         },
         replace: {
             dev: {
@@ -29,6 +32,10 @@ module.exports = function(grunt) {
                         {
                             match: 'ENDERECO_DO_CSS',
                             replacement: './styles/main.css'
+                        },
+                        {
+                            match: 'ENDERECO_DO_JS',
+                            replacement: '../src/scripts/main.js'
                         }
                     ]
                 },
@@ -47,6 +54,10 @@ module.exports = function(grunt) {
                         {
                             match: 'ENDERECO_DO_CSS',
                             replacement: './styles/main.min.css'
+                        },
+                        {
+                            match: 'ENDERECO_DO_JS',
+                            replacement: './scripts/main.min.js'
                         }
                     ]
                 },
@@ -71,8 +82,15 @@ module.exports = function(grunt) {
                 }
             }
         },
-        clean: ['prebuild']
-    });
+        clean: ['prebuild'],
+        uglify: {
+            target: {
+                files: {
+                    'dist/scripts/main.min.js' : 'src/scripts/main.js'
+                }
+            }
+        }
+    })
 
     // Carregar plugins
     grunt.loadNpmTasks('grunt-contrib-less');
@@ -80,8 +98,9 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-replace');
     grunt.loadNpmTasks('grunt-contrib-htmlmin');
     grunt.loadNpmTasks('grunt-contrib-clean');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
 
     // Registrar tarefas
     grunt.registerTask('default', ['watch']);
-    grunt.registerTask('build', ['clean', 'less:production', 'htmlmin:dist', 'replace:dist']);
+    grunt.registerTask('build', ['clean', 'less:production', 'htmlmin:dist', 'replace:dist', 'clean', 'uglify' ]);
 };
